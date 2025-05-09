@@ -115,15 +115,15 @@ $$
 - Query, Key, Value를 각각 $h$개의 선형 변환을 통해 $d_k$, $d_k$, $d_v$ 차원으로 투영
 - 각 head에서 병렬로 Scaled Dot-Product Attention을 수행:
 
-\[
+$$
 \text{head}_i = \text{Attention}(Q W^Q_i, K W^K_i, V W^V_i)
-\]
+$$
 
 - 모든 head의 출력을 Concatenate 한 뒤, 또 한 번 선형 변환:
 
-\[
+$$
 \text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, ..., \text{head}_h) W^O
-\]
+$$
 
 - 이 구조는 다양한 위치에서 다양한 표현 공간에 대해 동시에 주의를 집중하게 해 줌
 
@@ -171,9 +171,9 @@ Transformer에서는 Multi-Head Attention이 **총 3가지 방식**으로 사용
 - 이 FFN은 **각 위치(position)에 대해 독립적이고 동일하게 적용**됨.
 - 구조는 다음과 같다:
 
-\[
+$$
 \text{FFN}(x) = \max(0, xW_1 + b_1) W_2 + b_2
-\]
+$$
 
 - ReLU 활성화 함수를 중심으로 **두 개의 선형 변환**으로 구성됨.
 - 동일한 위치에 대해서는 동일한 FFN이 적용되지만, **레이어마다 다른 파라미터**를 사용함.
@@ -204,13 +204,13 @@ Transformer에서는 Multi-Head Attention이 **총 3가지 방식**으로 사용
 
 #### 📐 수식:
 
-\[
+$$
 PE_{(pos, 2i)} = \sin\left(\frac{pos}{10000^{2i/d_{\text{model}}}}\right)
-\]
+$$
 
-\[
+$$
 PE_{(pos, 2i+1)} = \cos\left(\frac{pos}{10000^{2i/d_{\text{model}}}}\right)
-\]
+$$
 
 - $pos$는 위치, $i$는 임베딩의 차원 인덱스
 - 각 차원은 서로 다른 주파수의 사인/코사인 함수를 사용
