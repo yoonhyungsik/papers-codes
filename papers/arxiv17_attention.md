@@ -65,7 +65,7 @@
 
 * Attention은 query, key, value의 세 가지 벡터 쌍을 입력으로 받아 **가중합된 value**를 출력하는 구조
 
-![어텐션 공식](../images/attentioncalc.png)
+![어텐션 공식](/papers/images/attentioncalc.png)
 
 ---
 
