@@ -34,6 +34,8 @@
 
 ### 전체 구조
 
+![트랜스포머 구조](/papers/images/AIAYNmodel.png)
+
 * Transformer는 **Encoder-Decoder 구조**로 구성되어 있음
 
 * **인코더**: 각 레이어는 두 개의 서브레이어로 구성됨
