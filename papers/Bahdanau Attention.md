@@ -108,4 +108,4 @@ $$
 * [💻 GitHub 구현 (예시)](https://github.com/keon/seq2seq)
 * [📈 Papers with Code](https://paperswithcode.com/paper/neural-machine-translation-by-jointly)
 
-## 다음 논문: Luong Attention / Transformer
+## 다음 논문: Attention Is All You Need
