@@ -35,7 +35,6 @@
 > **Next Sentence Prediction (NSP)**:  
 > 두 문장이 주어졌을 때, 두 번째 문장이 첫 번째 문장의 실제 다음 문장인지 아닌지를 맞추는 이진 분류 과제.  
 > 문장 간 연속성 학습을 위한 목적이지만, 후속 연구에서는 표면적 통계에 의존한다는 비판을 받았고  
-> RoBERTa는 NSP를 제거, ALBERT는 SOP(Sentence Order Prediction)로 대체함.
 
 ---
 
@@ -47,50 +46,97 @@
 
 ![Input Format](/papers/images/bert_input.png)
 
-* BERT는 Transformer Encoder만을 쌓은 구조로 구성되며, 문장을 입력으로 받아 양방향 문맥 정보를 학습할 수 있도록 설계됨.  
-* 입력은 `[CLS]` + 문장 A + `[SEP]` + 문장 B + `[SEP]` 형태로 구성되며,  
-  각 토큰은 **Token + Segment + Position Embedding**의 합으로 표현됨.  
-* 출력은 `[MASK]` 토큰에 대한 예측(Masked LM) 및 `[CLS]` 토큰을 통한 문장 관계 예측(NSP)에 사용됨.
+* BERT는 **Transformer Encoder만으로 구성된 다층 구조**로,  
+  입력 문장을 처리하여 **양방향 문맥 정보를 반영한 토큰 표현**을 생성한다.  
+* 입력은 `[CLS]` + 문장 A + `[SEP]` + 문장 B + `[SEP]` 형태로 구성된다.
+
+  ex) [CLS] The man went to the store [SEP] He bought some apples [SEP]
+
+- NSP (Next Sentence Prediction): 두 문장이 실제 이어지는지 분류  
+- MLM (Masked Language Modeling): `He bought [MASK] apples` → "some" 예측
+
+* 각 토큰은 다음 세 가지 임베딩의 합으로 표현된다:  
+**Token + Segment + Position Embedding**
+
+* 출력은 두 가지로 나뉜다:
+- `[MASK]` 위치에서의 단어 예측 → **MLM**
+- `[CLS]` 토큰의 출력 벡터를 통한 문장 관계 분류 → **NSP**
 
 ---
 
 ### 💠 핵심 모듈 또는 구성 요소
 
+---
+
 #### 🔹 Input Representation
 
-- **Token Embedding**: 단어 수준의 임베딩  
-- **Segment Embedding**: 문장 A와 B 구분 (0 또는 1)  
-- **Position Embedding**: 문장 내 위치 정보 반영
+각 토큰 \( x_i \)는 다음 임베딩의 합으로 구성됨:
 
-> 📌 최종 입력 임베딩:  
-> `E_input = E_token + E_segment + E_position`
+- **Token Embedding**: WordPiece 기반 단어 임베딩  
+- **Segment Embedding**: 문장 A/B 구분용 이진 벡터 (0 또는 1)  
+- **Position Embedding**: 토큰의 위치 정보 반영
+
+> 📌 최종 입력 표현:  
+>$$
+E_i = E_i^{\text{token}} + E_i^{\text{segment}} + E_i^{\text{position}}
+$$
+
+입력 시퀀스는 $$\( X \in \mathbb{R}^{n \times d} \)$$의 임베딩 행렬로 구성됨.
 
 ---
 
 #### 🔹 Transformer Encoder (Multi-layer)
 
-- 각 토큰은 **Self-Attention**을 통해 다른 모든 토큰과 관계를 계산하고  
-  여러 층의 Transformer Encoder를 거치며 문맥 기반 표현을 정제함.
+- BERT는 $$( L $$)개의 Transformer Encoder layer로 구성됨
+- 각 레이어는 다음 두 모듈로 구성됨:
 
-**각 레이어 구성 요소:**
-1. Multi-Head Self-Attention  
-2. Feed-Forward Network  
-3. Residual Connection + Layer Normalization
+1. **Multi-Head Self-Attention**  
+$$
+\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} \right)V
+$$
+ - 각 토큰이 문맥 내 다른 모든 토큰과 관계를 학습
+
+2. **Position-wise Feed-Forward Network (FFN)**
+$$
+ \text{FFN}(x) = \text{ReLU}(xW_1 + b_1)W_2 + b_2
+$$
+
+- 모든 연산은 **Residual Connection** + **Layer Normalization**과 함께 이루어짐:
+
+$$
+H^{(l+1)} = \text{LayerNorm}(H^{(l)} + \text{FFN}(\text{Attention}(H^{(l)})))
+$$
 
 ---
 
 #### 🔹 Masked Language Modeling (MLM)
 
-- 일부 토큰을 `[MASK]`로 가리고, 해당 단어를 예측하도록 학습  
-- 문맥을 기반으로 단어를 복원하면서 양방향 이해 능력을 학습
+- 전체 입력 토큰 중 15%를 무작위로 선택하여 [MASK], 랜덤 토큰, 또는 그대로 유지함
+- 목표: 마스킹된 위치 \( i \)에서의 단어 \( x_i \)를 **양방향 문맥 기반으로 예측**
+
+$$
+\max_\theta \sum_{i \in \mathcal{M}} \log P_\theta(x_i \mid x_{\setminus i})
+$$
+
+- 이를 통해 **양방향 contextual embedding**을 학습 가능
 
 ---
 
 #### 🔹 Next Sentence Prediction (NSP)
 
-- 두 문장 사이의 연결성 예측 (실제 다음 문장인지 아닌지)  
-- `[CLS]` 토큰을 통해 이진 분류 수행  
-- 일부 후속 모델에서는 해당 기법을 제거하거나 대체함
+- 입력 문장 쌍 (A, B)에 대해, B가 실제 다음 문장인지 분류하는 이진 과제  
+- [CLS] 토큰의 출력 벡터 \( h_{\text{[CLS]}} \)를 기반으로 softmax 분류 수행
+
+$$
+P(y \mid A, B) = \text{softmax}(W h_{\text{[CLS]}} + b)
+$$
+
+- NSP는 문장 간 의미적 연결 학습을 유도하나,  
+**후속 연구(RoBERTa 등)**에서는 해당 방식의 효과성에 의문을 제기함
+
+---
+
+
 
 ---
 
