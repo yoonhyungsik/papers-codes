@@ -25,7 +25,8 @@
 * 본 논문은 Transformer 기반 양방향 인코더 구조를 사전학습하여, 문맥의 좌우 정보를 동시에 반영할 수 있는 BERT(Bidirectional Encoder Representations from Transformers)를 제안함.
 * 사전학습 단계에서는 문맥 이해 능력을 학습하기 위해 **Masked Language Modeling(MLM)**과 **Next Sentence Prediction(NSP)**이라는 두 가지 목표 함수를 함께 사용.
 
-> **핵심 개념 정의**  
+> **핵심 개념 정의**
+
 > **Masked Language Modeling (MLM)**:  
 > 전체 입력 문장에서 무작위로 선택된 일부 토큰(약 15%)을 `[MASK]`로 가리고,  
 > 문장의 좌우 문맥을 함께 고려해 해당 단어를 예측하도록 학습하는 방식.  
