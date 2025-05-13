@@ -216,4 +216,4 @@ Vision Transformer(ViT)는 자연어 처리(NLP) 분야에서 성공을 거둔 T
 * [📈 Papers with Code (ViT)](https://paperswithcode.com/paper/an-image-is-worth-16x16-words-transformers)
 
 
-## 다음 논문:
+## 다음 논문:swin transformer
