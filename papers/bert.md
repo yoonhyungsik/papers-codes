@@ -70,53 +70,68 @@
 
 #### 🔹 Input Representation
 
-각 토큰 \( x_i \)는 다음 임베딩의 합으로 구성됨:
+## 🔹 입력 임베딩 구성
 
-- **Token Embedding**: WordPiece 기반 단어 임베딩  
-- **Segment Embedding**: 문장 A/B 구분용 이진 벡터 (0 또는 1)  
-- **Position Embedding**: 토큰의 위치 정보 반영
+BERT의 입력 임베딩 \( E_i \)는 세 가지 임베딩의 합으로 구성됩니다:
 
-> 📌 최종 입력 표현:  
->$$
+$$
 E_i = E_i^{\text{token}} + E_i^{\text{segment}} + E_i^{\text{position}}
 $$
+
+- $E_i^{\text{token}}$: 각 토큰의 단어 임베딩  
+- $E_i^{\text{segment}}$: 문장 구분 임베딩 (Segment A/B)  
+- $E_i^{\text{position}}$: 위치 정보를 나타내는 포지셔널 임베딩
+
+입력 시퀀스 전체는 다음과 같은 임베딩 행렬로 표현됩니다:
+
+$$
+X \in \mathbb{R}^{n \times d}
+$$
+- \( n \): 시퀀스 길이 (토큰 수)  
+- \( d \): 임베딩 차원
+
 
 입력 시퀀스는 $$\( X \in \mathbb{R}^{n \times d} \)$$의 임베딩 행렬로 구성됨.
 
 ---
 
-#### 🔹 Transformer Encoder (Multi-layer)
+## 🔹 Transformer Encoder (총 $L$층)
 
-- BERT는 $$( L $$)개의 Transformer Encoder layer로 구성됨
-- 각 레이어는 다음 두 모듈로 구성됨:
+각 레이어는 다음 두 모듈로 구성됩니다:
 
-1. **Multi-Head Self-Attention**  
+### 1. Multi-Head Self-Attention
+
 $$
 \text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} \right)V
 $$
- - 각 토큰이 문맥 내 다른 모든 토큰과 관계를 학습
 
-2. **Position-wise Feed-Forward Network (FFN)**
-$$
- \text{FFN}(x) = \text{ReLU}(xW_1 + b_1)W_2 + b_2
-$$
+> 각 토큰이 문맥 내 다른 모든 토큰과의 관계를 학습
 
-- 모든 연산은 **Residual Connection** + **Layer Normalization**과 함께 이루어짐:
+### 2. Position-wise Feed-Forward Network
 
 $$
-H^{(l+1)} = \text{LayerNorm}(H^{(l)} + \text{FFN}(\text{Attention}(H^{(l)})))
+\text{FFN}(x) = \text{ReLU}(xW_1 + b_1)W_2 + b_2
+$$
+
+모든 연산은 **Residual Connection**과 **Layer Normalization**을 포함한 다음 구조로 이루어집니다:
+
+$$
+H^{(l+1)} = \text{LayerNorm}\left(H^{(l)} + \text{FFN}\left(\text{Attention}(H^{(l)})\right)\right)
 $$
 
 ---
 
-#### 🔹 Masked Language Modeling (MLM)
+## 🔹 Masked Language Modeling (MLM)
 
-- 전체 입력 토큰 중 15%를 무작위로 선택하여 [MASK], 랜덤 토큰, 또는 그대로 유지함
-- 목표: 마스킹된 위치 \( i \)에서의 단어 \( x_i \)를 **양방향 문맥 기반으로 예측**
+- 전체 입력 토큰 중 15%를 무작위로 선택하여 `[MASK]`, 랜덤 토큰, 또는 그대로 유지
+- 목표: 마스킹된 위치 \( i \)에서의 단어 \( x_i \)를 양방향 문맥 기반으로 예측
 
 $$
 \max_\theta \sum_{i \in \mathcal{M}} \log P_\theta(x_i \mid x_{\setminus i})
 $$
+
+> 여기서 \( \mathcal{M} \)은 마스킹된 위치들의 집합이며,  
+> \( x_{\setminus i} \)는 \( x_i \)를 제외한 나머지 입력을 의미
 
 - 이를 통해 **양방향 contextual embedding**을 학습 가능
 
