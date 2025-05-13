@@ -49,7 +49,7 @@ ViT는 **최대한 단순한 형태의 Transformer**를 이미지에 직접 적�
 
 ### 🔷 전체 구조
 
-![모델 구조](papers/images/ViT_model.png)
+![모델 구조](/images/ViT_model.png)
 
 Vision Transformer(ViT)는 기존 Transformer 구조를 시각 입력에 직접 적용한 최초의 순수 Transformer 기반 모델 중 하나로, convolution 연산 없이 이미지 분류 문제를 해결하는 데 초점을 맞춘다. 모델의 전반적 구조는 다음과 같다:
 
