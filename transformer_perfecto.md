@@ -240,6 +240,82 @@ x ← LayerNorm(x)
 - **Decoder**: 이전 출력 토큰과 인코더 출력을 참고하여 다음 토큰 생성
 - **Cross-Attention**: Decoder가 Encoder 출력을 참조하는 데 사용
 
+# 🧠 Transformer 구조 정리 (Encoder-Decoder 중심)
+
+Transformer는 입력 시퀀스를 인코더(Encoder)로 처리한 뒤,  
+그 중간 표현을 바탕으로 디코더(Decoder)가 출력 시퀀스를 생성하는 구조입니다.
+
+---
+
+## 📦 전체 구조 개요
+
+[Input] → [Encoder] → (중간 표현) → [Decoder] → [Output]
+
+
+- **Encoder**: 입력 문장을 벡터로 인코딩
+- **Decoder**: 인코딩된 표현을 바탕으로 출력 문장을 생성
+
+---
+
+## 🔧 Transformer 구성 요소 요약
+
+| 모듈 | 위치 | 역할 |
+|------|------|------|
+| **Input Embedding** | Encoder & Decoder 앞단 | 토큰을 벡터로 변환 |
+| **Positional Encoding** | Encoder & Decoder | 순서 정보 부여 (Transformer는 순서를 못 인식함) |
+| **Multi-Head Attention** | Encoder & Decoder | 다양한 시점의 관계를 병렬로 학습 |
+| **Feed Forward Network (FFN)** | 각 블록 내부 | 비선형 변환 → 표현력 강화 |
+| **Residual Connection** | 각 블록 내부 | 정보 손실 방지 + 학습 안정화 |
+| **Layer Normalization** | 각 블록 내부 | 분포 정규화로 학습 안정화 |
+| **Encoder-Decoder Attention** | Decoder 내부 | Decoder가 Encoder 출력을 참조 |
+| **Linear + Softmax** | Decoder 출력단 | 다음 단어의 확률 분포 출력
+
+---
+
+## 🔁 Encoder 구조
+
+반복적으로 쌓이는 구조이며, 각 블록은 다음과 같이 구성됩니다:
+[Input Embedding + Positional Encoding] →
+[Multi-Head Self-Attention] →
+[Feed Forward Network]
+
+- **Self-Attention**: 입력 문장 내 모든 단어 간의 관계를 학습합니다.
+
+---
+
+## 🔁 Decoder 구조
+
+Decoder도 반복적으로 쌓이는 구조이며, 각 블록은 다음과 같습니다:
+[Output Embedding + Positional Encoding] →
+[Masked Multi-Head Attention] →
+[Encoder-Decoder Attention] →
+[Feed Forward Network]
+
+- **Masked Self-Attention**: 미래 단어를 가리기 위한 마스킹 처리
+- **Encoder-Decoder Attention**: 인코더 출력을 참조하여 출력 생성
+
+---
+
+## 🎯 핵심 정리
+
+| 구성 요소 | 핵심 역할 |
+|-----------|------------|
+| **Encoder** | 입력 문장을 벡터로 요약 |
+| **Decoder** | 벡터를 기반으로 새로운 시퀀스 생성 |
+| **Multi-Head Attention** | 중요한 관계(의존성)를 다양한 방향으로 학습 |
+| **Position Encoding** | 순서 정보 보완 |
+| **FFN / Residual / Norm** | 비선형 변환, 정보 보존, 학습 안정화
+
+---
+
+## 🧩 참고: 응용 구조
+
+- NLP: BERT (Encoder만 사용, MLM)
+- Vision: ViT, Swin Transformer (이미지를 패치로 나눠 Encoder 구조 활용)
+- 멀티모달: CLIP, BLIP (Cross-Attention 사용)
+
+
+
 ---
 
 ### 6. Masking
