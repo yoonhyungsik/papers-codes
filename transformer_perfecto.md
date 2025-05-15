@@ -180,6 +180,129 @@ Transformer는 NLP와 Computer Vision(CV)에서 모두 폭넓게 사용되지만
 
 ---
 
+# 🔑 Transformer에서 꼭 알아야 할 주요 구성 요소들
+
+Transformer는 단순한 어텐션 모델이 아닌, 다양한 핵심 구성 요소의 결합으로 구성됩니다. 아래는 Transformer를 깊이 이해하기 위해 꼭 알아야 할 요소들을 정리한 내용입니다.
+
+---
+
+## 1. Multi-Head Self-Attention (MHSA)
+
+- 여러 개의 어텐션 head를 병렬로 사용하여 다양한 관점에서 입력을 해석
+- 단일 head보다 더 풍부한 표현력과 학습 안정성 제공
+
+**연산식:**
+
+- Head마다 Q, K, V를 따로 계산하고 최종적으로 concat + Linear(Wᵒ)
+
+---
+
+## 2. Positional Encoding
+
+- Transformer는 순서 정보를 자체적으로 인식하지 못함 → 위치 정보를 추가해야 함
+
+**방식:**
+- 고정형 (사인/코사인 기반)
+- 학습형 (Learnable Position Embedding)
+
+**ViT**에서는 2D 위치 기반 positional encoding 사용
+
+---
+
+## 3. Residual Connection + Layer Normalization
+
+- 각 서브 레이어(어텐션, FFN)에 **skip connection**과 **LayerNorm**을 적용
+
+x ← x + Sublayer(x)
+x ← LayerNorm(x)
+
+안정적인 학습과 더 빠른 수렴에 기여
+
+### 4. Feed-Forward Network (FFN)
+
+- 각 토큰 위치마다 독립적으로 작동하는 MLP 구조
+- 비선형 변환을 통해 어텐션 후의 정보를 정제
+
+**구성식:**
+
+
+- 두 개의 Linear Layer와 비선형 활성화 함수 (GELU, ReLU 등) 사용
+
+---
+
+### 5. Encoder-Decoder 구조
+
+> BERT: Encoder-only  
+> GPT: Decoder-only  
+> T5 / BART: Encoder-Decoder 구조
+
+- **Encoder**: 입력을 문맥 정보를 포함한 고차원 벡터로 인코딩
+- **Decoder**: 이전 출력 토큰과 인코더 출력을 참고하여 다음 토큰 생성
+- **Cross-Attention**: Decoder가 Encoder 출력을 참조하는 데 사용
+
+---
+
+### 6. Masking
+
+#### ▸ Causal Masking
+- 미래 토큰의 정보를 참조하지 못하도록 차단
+- 주로 **GPT**와 같은 언어 생성 모델에서 사용됨
+
+#### ▸ Padding Mask
+- 입력 시퀀스의 [PAD] 위치를 무시하여 불필요한 계산 방지
+
+---
+
+### 7. Pre-training Objectives
+
+Transformer는 사전 학습(pretraining)을 통해 일반적인 언어 이해 능력을 먼저 학습함
+
+| Objective | 설명 | 대표 모델 |
+|-----------|------|------------|
+| **MLM (Masked Language Modeling)** | 입력 토큰 일부를 마스크 → 이를 예측 | BERT |
+| **CLM (Causal Language Modeling)** | 왼쪽에서 오른쪽으로 다음 토큰 예측 | GPT |
+| **Denoising Autoencoding** | 입력 문장을 변형 후 원래 문장 복원 | BART, T5 |
+
+---
+
+### 8. 파라미터 공유 및 효율화 기법
+
+- **ALBERT**: 동일 가중치 레이어를 반복 사용 → 모델 경량화
+- **Linformer / Performer / Longformer**: 어텐션의 연산 복잡도 $O(N^2)$을 줄이기 위한 다양한 기법
+- **Swin Transformer**: 이미지에서 윈도우 기반 어텐션 적용 → 시각적 계산 최적화
+
+---
+
+### 9. Transformer의 한계와 확장
+
+#### ❌ 한계
+- 입력 길이에 따라 **$O(N^2)$ 연산 복잡도** 발생
+- 긴 시퀀스에 대해 비효율적이며, 추론 속도도 느림
+
+#### ✅ 확장 모델
+| 계열 | 설명 |
+|------|------|
+| **Long-context Transformers** | 긴 문장을 효율적으로 처리 (예: BigBird, Longformer) |
+| **Vision Transformers** | 이미지 입력 처리에 최적화 (예: ViT, Swin) |
+| **Multimodal Transformers** | 텍스트 + 이미지 + 오디오 통합 (예: BLIP, Flamingo, LLaVA) |
+
+---
+
+### ✅ 핵심 요약 표
+
+| 구성 요소 | 설명 |
+|------------|--------|
+| **Q, K, V** | 어텐션의 입력: 주목 기준, 비교 대상, 참조 정보 |
+| **Positional Encoding** | 순서 정보 추가 |
+| **Multi-Head Attention** | 다양한 시각의 병렬 어텐션 |
+| **FFN** | 비선형 특징 추출 |
+| **Residual + Norm** | 학습 안정화 |
+| **Masking** | 생성 모델에서 미래 정보 차단 |
+| **Pretraining Objective** | 사전학습을 통한 일반화 능력 확보 |
+| **Encoder/Decoder** | 입력 처리 vs 생성 처리 역할 분리 |
+| **확장 모델** | 효율성 개선 및 멀티모달 확장 모델들 |
+
+
 
 
 
