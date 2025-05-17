@@ -220,4 +220,4 @@ MAE (Masked Autoencoders)는 **비대칭적 인코더-디코더 구조(asymmetri
 * [📈 Papers with Code](https://paperswithcode.com/paper/masked-autoencoders-are-scalable-vision)
 
 
-## 다음 논문:
+## 다음 논문: SegFormer
