@@ -119,8 +119,14 @@ SegFormer의 decoder는 convolution 또는 attention 연산 없이, 각 스테�
 
 2. **Feature Concatenation & MLP**:  
    Upsample된 feature들을 채널 차원으로 concat한 후, linear projection을 수행한다:
+   
+$$
+F_{\text{concat}} = \text{Concat}(\hat{F}_1, \hat{F}_2, \hat{F}_3, \hat{F}_4)
+$$
 
-![MLP Decoder 수식](https://latex.codecogs.com/svg.image?\begin{aligned}F_{\text{concat}}&=[\hat{F}_1;\hat{F}_2;\hat{F}_3;\hat{F}_4]\\y&=\text{MLP}(F_{\text{concat}})\end{aligned})
+$$
+y = \text{MLP}(F_{\text{concat}})
+$$
 
 
 4. **Segmentation Output**:  
@@ -161,58 +167,83 @@ SegFormer는 이러한 설계를 통해 **효율성, 정확성, 해상도 유연
 
 ## ⚖️ 기존 모델과의 비교
 
-| 항목    | 본 논문 | 기존 방법1 | 기존 방법2 |
-| ----- | ---- | ------ | ------ |
-| 구조    |      |        |        |
-| 학습 방식 |      |        |        |
-| 목적    |      |        |        |
+| 항목         | SegFormer (본 논문)                     | SETR (ViT 기반)                 | DeepLabV3+ (CNN 기반)      |
+|--------------|------------------------------------------|----------------------------------|-----------------------------|
+| 구조         | Hierarchical Transformer + All-MLP       | Flat ViT + CNN decoder           | ResNet backbone + ASPP      |
+| 학습 방식    | Positional Encoding 없음, multi-scale   | Positional Encoding 있음, 단일 scale | CNN 기반 End-to-End       |
+| 목적         | 경량화 + 정확도 + 해상도 유연성           | Transformer 성능 확인 중심         | 고정 해상도에서 성능 최적화 |
 
 ---
 
 ## 📉 실험 및 결과
 
 * **데이터셋**:
+  - ADE20K
+  - Cityscapes
+  - COCO-Stuff
+
 * **비교 모델**:
+  - DeepLabV3+
+  - SETR
+  - Swin Transformer
+  - PVT (Pyramid Vision Transformer)
+
 * **주요 성능 지표 및 결과**:
 
-| 모델      | Accuracy | F1 | BLEU | 기타 |
-| ------- | -------- | -- | ---- | -- |
-| 본 논문    |          |    |      |    |
-| 기존 SOTA |          |    |      |    |
+| 모델            | mIoU (ADE20K) | mIoU (Cityscapes) | FPS (Cityscapes) | 모델 크기 |
+|-----------------|---------------|-------------------|------------------|------------|
+| SegFormer-B0    | 37.4%         | 71.9%             | 48 FPS           | 3.7M       |
+| SegFormer-B5    | **51.8%**     | **84.0%**         | 22 FPS           | 84.7M      |
+| SETR-MLA        | 48.6%         | 79.3%             | < 5 FPS          | 308M       |
+| DeepLabV3+      | ~45%          | ~78%              | 18–30 FPS        | >50M       |
 
-> 실험 결과 요약 및 해석
+> **실험 결과 요약 및 해석**:  
+> SegFormer는 기존 ViT 기반 모델보다 훨씬 적은 연산량과 파라미터로도 높은 정확도를 달성함. 특히 작은 모델인 B0은 **ICNet 대비 60% 빠르고 4.2% 더 높은 정확도**, 큰 모델인 B5는 SETR보다 **1.8% 더 높은 mIoU와 5배 더 빠른 속도**를 보인다.
 
 ---
 
 ## ✅ 장점 및 한계
 
-## **장점**:
+### **장점**:
 
-*
+- **계층적 Transformer 구조**를 통해 CNN처럼 multi-scale feature를 생성함
+- **Positional Encoding 없이도 강력한 성능** 확보 (해상도 변화에 강건)
+- **간단한 All-MLP Decoder**로 연산량을 줄이면서도 SOTA 성능 달성
+- 다양한 입력 해상도와 상황에서도 **범용성 높은 성능**
+- 실제 inference 속도(48 FPS, B0 기준)가 빠르고 경량 모델도 잘 작동
 
-## **한계 및 개선 가능성**:
+---
 
-*
+### **한계 및 개선 가능성**:
+
+- Fully Transformer 구조이므로 **pre-training에 의존**하는 경향 있음 (ImageNet 등)
+- ViT와 동일하게 **데이터 부족 환경에서는 학습 어려움**
+- Decoder가 단순 MLP이므로 **복잡한 구조를 요구하는 scene parsing에는 한계 가능성**
+- **Patch Embedding은 고정 resolution 기반이므로** 아주 작은 객체 표현은 어려울 수 있음
 
 ---
 
 ## 🧠 TL;DR – 한눈에 요약
 
-> 핵심 아이디어 요약 + 이 논문의 기여를 한 줄로 요약
+> SegFormer는 **Positional Encoding 없이도 성능을 유지하는 Hierarchical Transformer Encoder**와 **복잡한 연산 없이도 강력한 표현력을 제공하는 All-MLP Decoder**를 결합하여, **효율성, 정확도, 해상도 적응성**을 모두 만족하는 차세대 semantic segmentation 모델을 제안한다.  
+> 특히, 기존 Vision Transformer 기반 segmentation 모델들의 한계였던 **단일 해상도 처리, 고정된 positional encoding, 높은 연산량**을 구조적으로 극복하며, 경량 모델(B0)부터 대형 모델(B5)까지 **SOTA 성능과 빠른 FPS**를 동시에 달성한다.
 
-| 구성 요소  | 설명 |
-| ------ | -- |
-| 핵심 모듈  |    |
-| 학습 전략  |    |
-| 전이 방식  |    |
-| 성능/효율성 |    |
+---
+
+| 구성 요소    | 설명 |
+|-------------|------|
+| 핵심 모듈    | **Hierarchical Transformer Encoder** + **All-MLP Decoder** 구조. CNN처럼 multi-scale feature 추출 후, MLP로 결합 |
+| 학습 전략    | **End-to-End supervised learning** using ImageNet pre-trained weights, positional encoding 없이도 학습 가능 |
+| 전이 방식    | 다양한 해상도와 입력 크기에서도 안정적인 성능을 보이며, ADE20K/Cityscapes/COCO-Stuff 등으로 fine-tuning |
+| 성능/효율성 | 파라미터 수와 연산량을 줄이면서도 기존 SOTA 모델(DeepLabV3+, SETR 등) 대비 **더 높은 정확도와 FPS** 달성 |
 
 ---
 
 ## 🔗 참고 링크 (References)
 
-* [📄 arXiv 논문](https://arxiv.org/)
-* [💻 GitHub](https://github.com/)
-* [📈 Papers with Code](https://paperswithcode.com/)
+* [📄 arXiv 논문](https://arxiv.org/abs/2105.15203)
+* [💻 GitHub - NVlabs/SegFormer](https://github.com/NVlabs/SegFormer)
+* [📈 Papers with Code](https://paperswithcode.com/paper/segformer-simple-and-efficient-design-for)
 
-## 다음 논문:
+
+## 다음 논문: SAM
