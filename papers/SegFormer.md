@@ -155,12 +155,73 @@ SegFormer는 다음과 같은 철학을 기반으로 설계되었다:
 
 ### 🔬 개념 요약
 
-- **Overlapping Patch Embedding**: CNN과 유사하게 지역 정보를 보존하는 token 분할 방식
-- **Hierarchical Feature Map**: 다양한 공간 크기의 feature 생성 가능
-- **Position-free Attention**: 위치 정보를 직접 주입하지 않아도 attention 구조로 공간 인식 가능
-- **Decoder 경량화**: 연산량은 줄이되, 성능은 유지 또는 향상
+- **는다.
 
-SegFormer는 이러한 설계를 통해 **효율성, 정확성, 해상도 유연성** 세 가지를 동시에 만족시키는 rare한 구조로 평가받는다.
+## 🔧 Step 1: Transformer는 왜 위치 정보를 못 알아보는가?
+
+### 💡 핵심 개념
+
+Transformer의 **self-attention은 permutation-invariant** (순서를 무시하는 연산).
+
+- Attention은 모든 토큰(또는 패치) 간의 관계를 **위치 정보 없이** 계산한다.
+- 따라서 이미지 패치를 줄 단위로 나열하면, 모델은 이게 “왼쪽 귀”인지 “오른쪽 꼬리”인지 **구분할 수 없다**.
+
+> 📌 그래서 **ViT는 positional encoding을 각 patch에 더해**,  
+> “이 patch는 이미지의 어디쯤에 있었다”는 정보를 **명시적으로 주입**.
+
+---
+
+## 🔧 Step 2: ViT의 Patch Embedding 구조
+
+ViT는 다음과 같은 과정을 통해 이미지를 처리:
+
+1. 이미지를 **16×16 크기의 non-overlapping patch**로 자른다.
+2. 각 patch를 **flatten**한 뒤, Linear Layer에 넣어 token embedding을 만든다.
+3. 이때 **공간 정보가 완전히 사라지기 때문에**, positional encoding을 추가로 더한다.
+
+
+> 📌 ViT의 구조에서는 patch 자체에는 위치 정보가 없기 때문에  
+> **positional encoding이 반드시 필요**.
+
+---
+
+## 🔧 Step 3: SegFormer의 Overlapping Patch Embedding 구조
+
+SegFormer는 ViT와 달리, patch를 자르지 않고 **Conv2D 연산을 통해 patch를 생성**.
+
+### 🎯 Overlapping Patch Embedding 방식
+
+- `Conv2D(kernel=3, stride=2, padding=1)`을 사용해 feature embedding을 생성.
+- 이 연산은 3×3 크기의 필터를 **겹치면서(overlapping)** 적용.
+- 즉, patch를 만드는 동시에 **local context (위치 주변 정보)**를 함께 봄.
+예시:
+patch_1 → 주변 3×3 영역 보기 (좌우 픽셀 포함)
+patch_2 → patch_1과 픽셀 일부 공유
+
+
+---
+
+### 📌 이 방식의 효과
+
+- patch들이 서로 겹쳐 있으므로, 인접한 patch가 **같은 픽셀 일부를 공유** 한다.
+- 이로 인해 patch 간의 **공간 연속성(spatial continuity)**가 유지된다.
+- 또한 Conv 연산은 **위치에 따라 다른 값을 출력**하기 때문에,  
+  모델은 **이 feature가 이미지 어디에서 왔는지를 내재적으로 구별**할 수 있다.
+
+> ✅ 결과적으로, Conv2D로 만든 patch는 단순한 색상 정보만 담는 것이 아니라  
+> **형태 정보 + 위치 정보**를 함께 내포하게 됨.
+
+---
+
+## ✅ 결론
+
+SegFormer는 **patch 생성 단계에서부터 위치 정보를 유지하는 구조**를 사용한다.  
+따라서 ViT처럼 별도로 positional encoding을 더하지 않아도,  
+**구조적으로 위치를 구분할 수 있는 inductive bias**가 자연스럽게 내장되어 있다.
+
+> 즉, **Overlapping Patch Embedding은 위치 정보를 '암묵적으로 포함한' embedding 방식이며,  
+> 이것이 positional encoding을 대체할 수 있는 근거다.**
+
 
 
 ---
