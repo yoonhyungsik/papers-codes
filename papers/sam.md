@@ -55,7 +55,7 @@ SAM은 위 문제를 해결하기 위해 다음과 같은 **프롬프트 기반 
 
 ## 3. 모델 구조 (Architecture)
 
-![sam_architecture]{/papers/images/sam_architecture.png}
+![sam_architecture](/papers/images/sam_architecture.png)
 
 Segment Anything Model (SAM)은 다양한 프롬프트(Point, Box, Mask 등)에 대해 범용 세분화가 가능한 구조로 설계된 파운데이션 모델이다. 모델은 다음의 세 주요 모듈로 구성된다:
 
