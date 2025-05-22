@@ -190,10 +190,9 @@ $$\log p(x) = \log \int p(x|z) p(z) \, dz$$
 ---
 ## 7. 📉 Evidence Lower Bound (ELBO)
 마르코프 부등식과 변분 추정을 통해 다음 식을 얻을 수 있음:\
-![ELBO Equation](https://latex.codecogs.com/svg.image?\log{p(x)}\geq\mathbb{E}_{q(z|x)}[\log{p(x|z)}]-D_{KL}[q(z|x)\parallel{p(z)}])
-
-
-
+$$
+\log p(x) \geq \mathrm{E}_{q(z|x)}[\log p(x|z)] - D_{\mathrm{KL}}(q(z|x) \| p(z))
+$$
 ### 항목별 의미
 | 항 | 이름 | 설명 |
 |----|------|------|
