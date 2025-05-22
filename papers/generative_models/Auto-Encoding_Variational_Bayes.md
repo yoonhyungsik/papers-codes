@@ -122,8 +122,124 @@ $$ \log p_\theta(x) \geq E_{q_\phi(z | x)}[\log p_\theta(x | z)] - D_{KL}(q_\phi
 - KL divergence 항은 정규분포 간 닫힌 형태(closed form)로 계산된다:\
   $$D_{KL}(q_\phi(z | x) \parallel p(z)) = \frac{1}{2} \sum_{i=1}^d \left( \mu_i^2 + \sigma_i^2 - \log \sigma_i^2 - 1 \right)$$
   
-### ⚖️ Comparison with Deterministic Autoencoder
+---
 
+### 내 말로 정리하는 VAE
+
+## 1. VAE란 무엇인가?
+
+**VAE (Variational Autoencoder)**는 기존의 Autoencoder 구조를 기반으로 하되, **확률적인(latent) 분포를 학습**하여 새로운 데이터를 생성할 수 있도록 고안된 **생성 모델(Generative Model)**이다.
+
+> 목표: 현실 데이터와 유사한 데이터를 생성하는 것 → 입력 데이터의 **실제 분포 p(x)** 를 근사하는 것
+
+---
+
+## 2. VAE의 전체 구조
+
+VAE는 크게 **세 가지 구성 요소**로 이루어진다:
+
+- **Encoder**: 입력 데이터를 잠재 공간(latent space)의 확률 분포로 매핑  
+- **Latent Space**: 학습된 잠재 벡터 z를 저장하는 공간  
+- **Decoder**: 잠재 벡터 z를 이용해 원래 데이터를 복원하거나 새로운 데이터를 생성
+
+Input x → [Encoder] → z (latent) → [Decoder] → Output x'
+
+## 3. Encoder: 입력을 확률 분포로 변환
+
+### 역할
+- 입력 $x$를 받아서 잠재 변수 $z$의 분포 $q(z|x)$를 추정
+- VAE에서는 이 분포를 **정규분포 $\mathcal{N}(\mu, \sigma^2)$**로 가정
+
+### 학습 내용
+- 입력 데이터를 인코딩한 뒤,
+  - 평균 $\mu$
+  - 표준편차 $\sigma$
+  를 추정하여 latent variable의 확률 분포를 정의함
+
+$q(z|x) = \mathcal{N}(\mu(x), \sigma^2(x))$
+
+## 4. 🧭 Latent Space: 잠재 공간의 벡터 표현
+
+### ❗ 문제점
+- 일반적인 Autoencoder는 latent space가 **불연속적**이고 **의미 없는 공간**이 될 수 있음
+- 따라서 새로운 z를 샘플링해도 유효한 x를 생성하지 못할 수 있음
+
+### ✅ 해결책: Reparameterization Trick
+
+잠재 벡터 z는 다음과 같이 재정의됨:
+
+$$
+z = \mu + \sigma \cdot \epsilon, \quad \epsilon \sim \mathcal{N}(0, 1)
+$$
+- $\epsilon$: 표준 정규분포에서 샘플링한 노이즈
+- $\mu, \sigma$: Encoder에서 추출한 평균과 표준편차
+> 이 방식은 확률적 sampling을 deterministic 함수로 변형하여 **역전파(Backpropagation)**이 가능하게 함
+---
+## 5. 🛠 Decoder: z를 x로 복원
+- Decoder는 잠재 벡터 $z$를 입력으로 받아 원래 입력 $x$를 복원
+- 우리가 추정하고자 하는 분포는:
+$$p(x|z)$$
+> 학습이 완료되면 **Decoder만으로도 새로운 데이터를 생성**할 수 있게 됨
+---
+## 6. 🎯 VAE 학습 목표: Likelihood 최대화
+### 기본 목표
+입력 데이터 $x$의 marginal likelihood를 최대화:
+$$\log p(x) = \log \int p(x|z) p(z) \, dz$$
+→ 하지만 위 항은 직접 계산이 불가능
+### ▶ 해결책: Evidence Lower Bound (ELBO)
+---
+## 7. 📉 Evidence Lower Bound (ELBO)
+마르코프 부등식과 변분 추정을 통해 다음 식을 얻을 수 있음:\
+![ELBO Equation](https://latex.codecogs.com/svg.image?\log{p(x)}\geq\mathbb{E}_{q(z|x)}[\log{p(x|z)}]-D_{KL}[q(z|x)\parallel{p(z)}])
+
+
+
+### 항목별 의미
+| 항 | 이름 | 설명 |
+|----|------|------|
+| $\mathbb{E}_{q(z\|x)}[\log p(x \| z)]$ | Reconstruction Term | Decoder가 x를 얼마나 잘 복원하는지를 측정하는 항. Autoencoder의 Reconstruction Loss와 유사 |
+| $D_{KL}[q(z \| x) \| p(z)]$ | Regularization Term | 잠재 공간에서 $q(z \| x)$가 prior 분포 $p(z) \sim \mathcal{N}(0,1)$와 얼마나 유사한지를 측정하는 항. 모델이 의미 있는 latent space를 갖도록 함 |
+
+> 따라서 **ELBO를 최대화하는 것이 VAE의 학습 목표**가 됨
+
+---
+
+## 8. 🔍 ELBO 유도 간단 설명
+ELBO는 다음 식에서 유도됨:
+
+$$\log p(x) = \mathbb{E}_{q(z|x)}[\log p(x|z)] - D_{KL}(q(z|x)\|p(z)) + D_{KL}(q(z|x)\|p(z|x))$$
+
+- 마지막 항 $D_{KL}(q(z|x)\|p(z|x)) \geq 0$
+- 따라서 우변의 나머지 두 항이 **Evidence Lower Bound (ELBO)**가 됨
+
+$$\log p(x) \geq \mathbb{E}_{q(z|x)}[\log p(x|z)] - D_{KL}[q(z|x)\|p(z)]$$
+
+---
+
+## 9. 🎨 학습 후 데이터 생성 (Sampling)
+학습이 완료된 후, 새로운 데이터를 생성하는 과정:
+
+1. 잠재 공간에서 새로운 벡터 $z$를 샘플링:
+
+$z \sim \mathcal{N}(0, 1)$
+
+2. 이를 decoder에 입력:
+
+$x_{\text{new}} = \text{Decoder}(z)$
+
+→ 이 방식으로 **완전히 새로운 데이터를 생성**할 수 있음
+
+---## 🔚 최종 정리
+| 구성 요소 | 역할 |
+|-----------|------|
+| **Encoder** | 입력 $x$ → 잠재 분포 $q(z|x)$ 추정 |
+| **Latent Space** | $z$ 벡터 공간. Reparameterization trick 적용 |
+| **Decoder** | $z$ → $x$ 복원. $p(x|z)$ 학습 |
+| **목적 함수** | ELBO = Reconstruction Term + Regularization Term |
+| **학습 방식** | ELBO를 최대화하여 $\log p(x)$를 근사 |
+| **생성 방식** | $z \sim \mathcal{N}(0,1) \Rightarrow x = \text{Decoder}(z)$ |
+---
+### ⚖️ Comparison with Deterministic Autoencoder
 | Component     | Traditional Autoencoder         | Variational Autoencoder (VAE)             |
 |---------------|----------------------------------|--------------------------------------------|
 | Latent $z$    | Deterministic vector             | Probabilistic latent variable              |
@@ -131,9 +247,6 @@ $$ \log p_\theta(x) \geq E_{q_\phi(z | x)}[\log p_\theta(x | z)] - D_{KL}(q_\phi
 | Decoder       | $\hat{x} = g(z)$                 | $p_\theta(x \mid z)$ (likelihood model)    |
 | Objective     | $\|x - \hat{x}\|^2$              | ELBO (reconstruction + KL divergence)      |
 | Regularization| L2 weight decay (optional)       | Prior-matching via KL divergence           |
-
----
-
 ## 4. 실험 및 결과 (Experiments & Results)
 
 | 항목       | 본 논문 (VAE)                                      | 기존 방법 1 (AE)                          | 기존 방법 2 (MCMC 기반 Variational Inference) |
