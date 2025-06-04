@@ -69,7 +69,7 @@
 
 ### 🧱 전체 구조
 
-![QLoRA 모델 구조](papers/images/qlora.png)
+![QLoRA 모델 구조](../images/qlora..png)
 
 QLoRA는 다음 세 가지 핵심 모듈이 결합된 구조입니다:
 
