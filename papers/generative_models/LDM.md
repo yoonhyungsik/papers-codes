@@ -45,6 +45,9 @@
 
 ## 3. 모델 구조 (Architecture)
 
+![LDM 구조도](./images/lmd.png)
+
+
 ### 🧩 전체 구조
 
 LDM은 크게 다음과 같은 세 단계로 구성됩니다:
