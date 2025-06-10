@@ -45,7 +45,7 @@
 
 ## 3. 모델 구조 (Architecture)
 
-![LDM 구조도](./images/LDM.png)
+![LDM 구조](../images/LDM.png)
 
 
 ### 🧩 전체 구조
