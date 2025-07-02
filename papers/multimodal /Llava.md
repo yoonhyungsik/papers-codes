@@ -42,7 +42,7 @@
 
 ### 전체 구조
 
-![모델 구조](https://github.com/haotian-liu/LLaVA/raw/main/figs/architecture.jpg)
+![LLaVA 구조](../images/llava_structure.png)
 
 LLaVA는 "Large Language and Vision Assistant"라는 이름 그대로, 시각 정보(이미지)와 언어(텍스트)를 동시에 이해하고 응답할 수 있는 멀티모달 모델이다.  
 이 모델은 세 가지 주요 구성 요소로 이루어진다:
