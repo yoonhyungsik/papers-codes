@@ -3,10 +3,10 @@
 ## 1. 개요 (Overview)
 
 * **제목**: DALL·E 3 (OpenAI, 2023)
-* **저자**: Gabriel Goh, James Betker, Li Jing, Aditya Ramesh 외 OpenAI 연구진 :contentReference[oaicite:1]{index=1}
-* **소속**: OpenAI :contentReference[oaicite:2]{index=2}
-* **학회**: 공식 학술 논문 미출간 (OpenAI 기술 문서 및 블로그 기반 공개) :contentReference[oaicite:3]{index=3}
-* **링크**: [OpenAI DALL·E 3 공식 소개](https://openai.com/dall-e-3) :contentReference[oaicite:4]{index=4}
+* **저자**: Gabriel Goh, James Betker, Li Jing, Aditya Ramesh 외 OpenAI 연구진 
+* **소속**: OpenAI 
+* **학회**: 공식 학술 논문 미출간 (OpenAI 기술 문서 및 블로그 기반 공개) 
+* **링크**: [OpenAI DALL·E 3 공식 소개](https://openai.com/dall-e-3)
 
 > DALL·E 3는 GPT 계열 언어 모델과 Latent Diffusion 기반 이미지 생성기를 결합한 **텍스트 → 이미지 시스템**. GPT 구조로 복잡한 프롬프트를 해석하고 강화(prompts)의 세밀도를 높이며, **high-fidelity 이미지 생성**은 Latent Diffusion으로 처리. 이전 버전 대비 텍스트 정합성과 이미지 표현 정확도가 크게 향상되었으며, ChatGPT와의 통합으로 사용자 인터랙션이 강화.
 
@@ -38,7 +38,7 @@
 
 ### 전체 구조
 
-![모델 구조](images/dalle3_architecture.png)
+![모델 구조](./images/dalle3_architecture.png)
 
 DALL·E 3는 다음과 같은 **하이브리드 구조**로 구성되어 있습니다:
 
