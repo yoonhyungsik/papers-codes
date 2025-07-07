@@ -38,7 +38,7 @@
 
 ### 전체 구조
 
-![모델 구조](./images/dalle3_architecture.png)
+![모델 구조](../images/dalle3_architecture.png)
 
 DALL·E 3는 다음과 같은 **하이브리드 구조**로 구성되어 있습니다:
 
