@@ -55,11 +55,11 @@ LVDM은 이러한 한계를 해결하기 위해 다음과 같은 전략을 제�
 
 ## 3. 모델 구조 (Architecture)
 
-![모델구조조]
+![모델 구조](../images/lvdm_architecture.png)
 
 ### 🔷 전체 시스템 구성 흐름
 
-LVDM은 비디오 생성 과정을 다음의 세 단계로 구성된 파이프라인으로 수행한다다:
+LVDM은 비디오 생성 과정을 다음의 세 단계로 구성된 파이프라인으로 수행한다:
 ```
 [1] 입력 비디오 또는 조건 (ex. 텍스트 prompt)
                 ↓
@@ -83,17 +83,17 @@ LVDM은 비디오 생성 과정을 다음의 세 단계로 구성된 파이프�
 #### 🔷 1. 3D Video Autoencoder (VAE 기반)
 
 **📌 작동 방식**  
-- 입력 비디오 $x \in \mathbb{R}^{T \times H \times W \times 3}$는 시간 축 $T$, 공간 해상도 $H \times W$를 갖는 RGB 시퀀스입니다.  
-- 이 비디오는 **3D convolution 기반 인코더**를 거쳐 **시공간적으로 압축된 latent representation** $z$로 매핑됩니다:
+- 입력 비디오 $x \in \mathbb{R}^{T \times H \times W \times 3}$는 시간 축 $T$, 공간 해상도 $H \times W$를 갖는 RGB 시퀀스.  
+- 이 비디오는 **3D convolution 기반 인코더**를 거쳐 **시공간적으로 압축된 latent representation** $z$로 매핑:
 
 ```math
 z \in \mathbb{R}^{T \times H' \times W' \times C}
 ```
 
-- 이 latent는 이후 diffusion 과정에서 사용되며, 최종적으로 VAE 디코더를 통해 원래의 해상도로 복원됩니다.
+- 이 latent는 이후 diffusion 과정에서 사용되며, 최종적으로 VAE 디코더를 통해 원래의 해상도로 복원.
 
 **📌 학습 목표**  
-- reconstruction 손실 + 정규화(KL divergence)를 최소화하여 latent 공간이 자연스러운 prior $p(z)$를 따르도록 학습합니다.
+- reconstruction 손실 + 정규화(KL divergence)를 최소화하여 latent 공간이 자연스러운 prior $p(z)$를 따르도록 학습.
 
 **📌 복원 손실 수식**
 
@@ -109,7 +109,7 @@ z \in \mathbb{R}^{T \times H' \times W' \times C}
 #### 🔷 2. Hierarchical Latent Diffusion
 
 **📌 작동 방식**  
-- 전체 비디오를 한 번에 생성하지 않고, **시간 해상도를 점차 증가시키는 hierarchical sampling**을 사용합니다:
+- 전체 비디오를 한 번에 생성하지 않고, **시간 해상도를 점차 증가시키는 hierarchical sampling**을 사용:
 
   1. **Coarse step**: 낮은 frame rate (예: 8fps) 수준의 latent 시퀀스를 생성  
   2. **Interpolation**: latent space에서 시간 축 보간 수행  
@@ -137,11 +137,11 @@ z_{t-1} = z_t - \epsilon_{\theta}(z_t, t, c)
 #### 🔷 3. Conditional Latent Perturbation
 
 **📌 문제 인식**  
-- 조건(condition) 기반 비디오 생성에서, 샘플링이 길어질수록 **조건 정보가 흐려지고** 내용이 **drift**되는 문제가 발생합니다.
+- 조건(condition) 기반 비디오 생성에서, 샘플링이 길어질수록 **조건 정보가 흐려지고** 내용이 **drift**되는 문제가 발생.
 
 **📌 해결책**  
-- 조건 정보 $c$ (예: 텍스트 프롬프트)로부터 perturbation 벡터를 생성해 **latent 공간에 직접 주입**합니다.  
-- 이를 통해 diffusion 도중에도 조건의 영향을 지속적으로 반영할 수 있습니다.
+- 조건 정보 $c$ (예: 텍스트 프롬프트)로부터 perturbation 벡터를 생성해 **latent 공간에 직접 주입**.  
+- 이를 통해 diffusion 도중에도 조건의 영향을 지속적으로 반영할 수 있다.
 
 **📌 수식**
 
@@ -172,7 +172,7 @@ z_t = z_t + \alpha \cdot \text{Perturb}(c)
 
 - Classifier-Free Guidance (CFG) 방식을 차용해
 
-- 조건이 있는 경로와 조건이 없는 경로의 예측값을 혼합하여 샘플링을 유도합니다.
+- 조건이 있는 경로와 조건이 없는 경로의 예측값을 혼합하여 샘플링을 유도.
 
 **📌 수식**
 ```math
