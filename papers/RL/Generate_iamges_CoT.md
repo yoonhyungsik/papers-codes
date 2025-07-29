@@ -33,7 +33,7 @@
 
 ### 3.1 전체 파이프라인 개요
 
-![전체 파이프라인](papers/images/Cot.png)
+![전체 파이프라인](../images/Cot.png)
 
 1. **텍스트 프롬프트 인코딩**  
    - Prompt 토큰을 텍스트 인코더(Transformer)로 임베딩  
