@@ -53,6 +53,7 @@
 ---
 
 ## 3. 모델 구조 (Architecture)
+![omnigen_architecture][../images/omnigen2_architecture.png]
 ### 전체 구조
 
 - **Dual‑path 디코딩**: 텍스트는 **autoregressive LM 경로**, 이미지는 **diffusion transformer 경로**로 **완전히 분리된 파라미터**를 사용해 디코딩한다. 이때 **MLLM의 히든 상태**가 이미지 디퓨전 경로의 조건(condition)으로 전달되며, **이미지 저수준 정보는 VAE 인코더**에서만 추출해 디퓨전 경로에 **독점적으로** 주입한다. 이렇게 **ViT(이해)** ↔ **VAE(생성)** 을 분리한 **decoupled 설계**가 언어 능력을 보존하면서 시각 품질과 일관성을 끌어올린다.
