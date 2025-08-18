@@ -56,7 +56,7 @@
 
 ### 전체 구조
 
-![reflection_flow](..\images\reflection_flow.png)
+![reflection_flow](../images/reflection_flow.png)
 
 **파이프라인 한눈에 보기**
 
