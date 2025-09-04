@@ -3,8 +3,8 @@
 ## 1. 개요 (Overview)
 
 * **제목**: FLUX.1 Kontext: Flow Matching for In-Context Image Generation and Editing in Latent Space  
-* **저자**: Kwonjoon Lee, Jongheon Jeong, Doyup Lee, Hyeonho Jeong, Jinwoo Shin  
-* **소속**: Korea Advanced Institute of Science and Technology (KAIST)  
+* **저자**:  
+* **소속**: 
 * **학회**: arXiv (Preprint, 2025)  
 * **링크**: [arXiv](https://arxiv.org/abs/2506.15742) / [GitHub](https://huggingface.co/6chan/flux1-kontext-dev-fp8) / [Papers with Code](https://paperswithcode.com/paper/flux-1-kontext-flow-matching-for-in-context)  
 
