@@ -52,7 +52,7 @@ RewardDance는 비주얼 생성 모델의 성능을 획기적으로 향상시키
 
 ## 2. 전체 구조 (Architecture Overview)
 
-![Reward_Dance 구조](../images/Reward_dance.png)
+![Reward_Dance 구조](../images/RewardDance.png)
 
 ### 🎯 핵심 설계 철학
 - **스케일러빌리티**: 1B부터 26B 파라미터까지 체계적 스케일링
